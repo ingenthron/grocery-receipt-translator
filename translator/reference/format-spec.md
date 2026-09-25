@@ -36,5 +36,5 @@ An item row may draw its values from more than one line (a weighed item often pr
 ## Codebook lookups
 
 - Tracker name and Category come only from `codebook.md`.
-- Look up the row's As printed value, without its citation, in the codebook's Printed text column. It must match exactly: same characters, same case, same spaces between words.
+- Look up the row's As printed value, without its citation, in the codebook's Printed text column. It must match exactly: same characters, same case, same words in the same order (a run of spaces counts as one space).
 - A match fills Tracker name and Category from that entry, both cited to its id. No match: both are `not in codebook`. A partial or near match is no match.

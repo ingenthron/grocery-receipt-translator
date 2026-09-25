@@ -1,0 +1,1 @@
+Discount amount 1.00 is part of the printed token -1.00 (minus sign dropped).

@@ -90,11 +90,11 @@ When the status is `not translated`, sections A to E keep their headings and eac
 
 ## Sentinels
 
-The only values that need no source citation.
+Fixed values written in place of a receipt value. All of them except `[illegible]` stand without a citation.
 
 | Sentinel | Meaning | Where |
 |---|---|---|
-| `not in source` | The receipt does not print this | Any value cell in B, C, D |
+| `not in source` | The receipt does not print this | Any value cell in B, C, D, except Tracker name and Category (those are `not in codebook`) |
 | `[illegible]` | The receipt prints something here that cannot be read | Any value cell in B, C, D, cited to the line it is on, as `[illegible] {R07}`; also inside source lines |
 | `not in codebook` | No codebook entry matches this row's As printed text exactly | Tracker name and Category only |
 | `none` | Nothing to list | Section E when every line is cited; every section when not translated |

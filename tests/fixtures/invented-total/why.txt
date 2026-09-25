@@ -1,0 +1,1 @@
+Total 8.46 is not printed on R16 (it prints 7.46).

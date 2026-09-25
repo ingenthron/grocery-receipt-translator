@@ -1,0 +1,1 @@
+Section D heading renamed to '## D. Line items'.

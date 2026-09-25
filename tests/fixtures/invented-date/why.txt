@@ -1,0 +1,1 @@
+Date rewritten as 2026-09-20; the receipt prints 09/20/26.

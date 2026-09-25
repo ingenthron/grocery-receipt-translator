@@ -1,0 +1,1 @@
+BANANAS matches entry C001 exactly, but the row says not in codebook.

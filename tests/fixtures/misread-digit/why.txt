@@ -1,0 +1,1 @@
+Section A misreads the last digit of the phone number (0146 for 0148).

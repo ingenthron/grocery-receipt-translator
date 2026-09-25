@@ -1,0 +1,1 @@
+Store name joins R01 with the first address line R02 and cites only R01.

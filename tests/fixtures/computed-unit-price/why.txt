@@ -1,0 +1,1 @@
+Unit price 1.52/kg worked out from 1.55 / 1.020 kg; the receipt prints no price per kg.

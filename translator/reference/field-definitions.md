@@ -42,7 +42,7 @@ Rows come only from the item area: the lines after the store's header and before
 | Tracker name | The Tracker name of the codebook entry whose Printed text exactly equals this row's As printed text, cited `{Cnnn}` | `not in codebook` |
 | Category | The Category of the same codebook entry, cited `{Cnnn}` | `not in codebook` |
 
-No item printed: one row, `not in source` in every cell.
+No item printed: one row, `not in source` in every cell except Tracker name and Category, which are `not in codebook`.
 
 ## E. Coverage ledger
 
