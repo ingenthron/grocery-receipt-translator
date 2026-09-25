@@ -1,0 +1,4 @@
+# Never published: build notes, the competition checklist, real receipts.
+_private/
+# Build-session instructions for Claude Code (local only; the entry is the five judged files).
+CLAUDE.md
