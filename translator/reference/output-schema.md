@@ -54,7 +54,7 @@ R02 <line 2>
 | A | `## A. Source lines` | Every non-blank printed line, numbered, in a `text` code block |
 | B | `## B. Receipt fields` | The six fields below, in this order, one row each |
 | C | `## C. Taxes` | One row per tax line printed |
-| D | `## D. Items` | One row per purchased item, deposit, fee or discount, in receipt order |
+| D | `## D. Items` | One row per purchased item, deposit, fee, coupon or discount, in receipt order |
 | E | `## E. Coverage ledger` | Every source line not cited in B, C or D |
 
 ## Status values

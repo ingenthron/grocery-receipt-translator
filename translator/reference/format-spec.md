@@ -8,6 +8,7 @@ How values, lines and citations are written. `output-schema.md` says where thing
 - Each entry is `R` + a two-digit number (`R01`, `R02` ... `R99`, then `R100`), one space, then the line as printed.
 - Copy every character as printed: same spelling, same case, same abbreviations, same symbols. Runs of spaces may be written as one space.
 - Anything that cannot be read, or is covered, is written `[illegible]`, for one character, one word, or the whole line. Never guess a character.
+- If you are given receipt text that already says `[redacted]`, copy it as `[redacted]`, like any other printed text.
 - A receipt that continues past the edge of the photo ends at the last line the photo shows.
 
 ## Values

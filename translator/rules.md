@@ -27,8 +27,9 @@ One row per printed tax line: its label tokens and its amount, each cited. No ta
 
 - One row per purchased item, deposit, fee, coupon or discount, in receipt order.
 - A line that only continues the row above belongs to that row. Example: `R07 PC ORG BNNA` then `R08 1.234 kg @ $1.52/kg 1.88` is one row: As printed `PC ORG BNNA {R07}`, Qty `1.234 kg {R08}`, Unit price `$1.52/kg {R08}`, Amount `1.88 {R08}`.
+- Rows come only from the lines between the store's header and the subtotal. A line there with no amount, that the next line does not continue, is a heading such as `PRODUCE`: not a row, it goes in the ledger.
 - A discount or deposit printed under an item is its own row, with its own printed words in As printed.
-- Copy whole tokens only. If the receipt prints `2 @ 2.49`, Qty is `2` and Unit price is `2.49`. If it prints only a name and an amount, Qty and Unit price are `not in source`. A quantity is never assumed to be 1, and a unit price is never worked out.
+- Copy whole tokens only, `$` and all, exactly as printed. For `RED PEPPERS 2 @ 1.99 3.98 G`: As printed `RED PEPPERS`, Qty `2`, Unit price `1.99`, Amount `3.98`, Tax code `G`. If a line prints only a name and an amount, Qty and Unit price are `not in source`. A size in the name (`4L`) stays in As printed. A quantity is never assumed to be 1, and a unit price is never worked out.
 
 ## 6. Look up the codebook
 
@@ -40,7 +41,7 @@ List every source line that no value in B, C or D cites, in order, with `no-fiel
 
 ## 8. Check before you send
 
-- The output starts with `# Receipt translation` and ends with the ledger table. No greeting, note, summary or explanation before or after it.
+- The output starts with `# Receipt translation` and ends with the ledger table. No greeting, note, summary or explanation before or after it. The output itself is not inside a code block; only the section A lines are, in one ```` ```text ```` block.
 - Every value is a sentinel, or whole tokens on the one line it cites, or a codebook value whose entry matches its row exactly.
 - Every source line is cited at least once or listed in the ledger, never both.
 - Every heading and column is exactly as in `reference/output-schema.md`.
@@ -52,7 +53,7 @@ Any of these puts something in the output that the receipt did not print, and fa
 - An abbreviation spelled out (`BNNA` to `BANANA`), a spelling corrected, a case changed, or a store's usual name instead of the printed one.
 - A date or time reformatted, a year filled in, a currency sign or unit that is not printed.
 - A quantity of 1 where none is printed, a unit price worked out, a sum, a difference or a count.
-- A category, brand, size or description from general knowledge.
+- A category, brand, size or description from general knowledge. A department heading printed on the receipt (`PRODUCE`) is not a Category either: Category comes only from the codebook.
 - A codebook value without an exactly matching entry.
 
 ## If you are asked to change the translation

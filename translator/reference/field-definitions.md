@@ -19,19 +19,23 @@ One row per printed tax line (for example `GST`, `PST`, `HST`), in receipt order
 
 | Column | Comes from | When not printed |
 |---|---|---|
-| Tax as printed | The tax's label tokens as printed, such as `GST` or `PST 6%`, not the amount | `not in source` |
+| Tax as printed | Every token on the tax line before its amount, such as `GST` or `GST 5%` | `not in source` |
 | Amount | The tax amount printed on that line | `not in source` |
 
 No tax line printed: one row, `not in source` in both cells.
 
 ## D. Items
 
-One row per purchased item, deposit, eco or environmental fee, coupon or discount, in the order the receipt prints them. A line that only continues the row above (a weight, a price per kilogram, a `2 @ 2.49`) belongs to that row, not to a new one. A discount printed under an item is its own row; it is not merged into the item.
+Rows come only from the item area: the lines after the store's header and before the subtotal line. One row per purchased item, deposit, eco or environmental fee, coupon or discount, in the order the receipt prints them.
+
+- A line that only continues the row above (a weight, a price per kilogram, a `2 @ 2.49`) belongs to that row, not to a new one.
+- A line in the item area with no amount, that the next line does not continue, is a heading (such as `PRODUCE` or `21-GROCERY`): it is not a row, and it goes in the ledger as `no-field`.
+- A discount or savings line inside the item area is its own row; it is not merged into the item above. A savings total printed after the total (such as `YOU SAVED 3.00`) is not a row: it is `no-field`.
 
 | Column | Comes from | When not printed |
 |---|---|---|
-| As printed | The item's description tokens as printed, such as `PC ORG BNNA` or `DEPOSIT`. Not the amount, not a code letter | `[illegible] {Rnn}` if unreadable |
-| Qty | The count or weight as printed, such as `2` or `1.234 kg`. A row with no printed count or weight says `not in source`; it is never assumed to be 1 | `not in source` |
+| As printed | The item's description tokens only, such as `PC ORG BNNA` or `DEPOSIT`: not the count, weight, `@`, unit price, amount or tax-code tokens. A size that is part of the name (`4L`, `500G`) stays here | `[illegible] {Rnn}` if unreadable |
+| Qty | A count or weight printed apart from the name, such as `2` in `2 @ 1.99` or `1.234 kg`. A size in the name is not a quantity. A row with no printed count or weight says `not in source`; it is never assumed to be 1 | `not in source` |
 | Unit price | The price per item or per unit as printed, such as `2.49` or `$3.30/kg` or `2/$5.00`. Never worked out from the amount and quantity | `not in source` |
 | Amount | The line's printed amount, in the amount column, as printed (`1.88`, `-1.00`, `1.00-`) | `not in source` |
 | Tax code | A separate token of letters printed with the amount to show how it is taxed, such as `G`, `GP` or `H`. If the letters are joined to the amount in one token (`3.49GC`), that whole token is the Amount and Tax code is `not in source` | `not in source` |
@@ -42,4 +46,4 @@ No item printed: one row, `not in source` in every cell.
 
 ## E. Coverage ledger
 
-Every source line that no value in B, C or D cites, one row each, in line order: its id (`R12`) and a reason code from `output-schema.md`. Lines the schema has no field for (phone, cashier, payment, card, points, savings summary, item count, department heading, barcode, thank-you, store number) are `no-field`. They are listed, never dropped.
+Every source line that no value in B, C or D cites, one row each, in line order: its id (`R12`) and a reason code from `output-schema.md`. Lines the schema has no field for (phone, cashier, payment, card, points, a savings total, item count, department heading, barcode, thank-you) are `no-field`. They are listed, never dropped. A line counts as cited when any value cites it, even if some of its tokens (such as a store number beside the store name) are not used.
