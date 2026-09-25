@@ -34,6 +34,7 @@ REPO = Path(__file__).resolve().parent.parent
 SCHEMA_PATH = REPO / "translator" / "reference" / "output-schema.md"
 DEFAULT_CODEBOOK = REPO / "translator" / "reference" / "codebook.md"
 FIXTURES_DIR = REPO / "tests" / "fixtures"
+EXAMPLES_PATH = REPO / "translator" / "examples.md"
 
 GATES = ("fidelity", "trace", "coverage", "shape")
 
@@ -761,6 +762,44 @@ def main_fixtures(schema):
     return 0 if bad == 0 else 1
 
 
+def main_examples(schema):
+    """Check every translation in translator/examples.md against the printed
+    lines shown as its input (the ```text block), with the real codebook."""
+    import tempfile
+    text = EXAMPLES_PATH.read_text(encoding="utf-8")
+    parts = re.split(r"(?m)^## (Example \d+[^\n]*)\n", text)[1:]
+    if not parts:
+        print("BAD  no '## Example' sections in %s" % EXAMPLES_PATH.name)
+        return 1
+    bad = 0
+    with tempfile.TemporaryDirectory() as tmp:
+        for k in range(0, len(parts), 2):
+            title, body = parts[k], parts[k + 1]
+            name = title.split(":")[0]
+            out = re.search(r"(?ms)^````markdown\n(.*?)^````\s*$", body)
+            src = re.search(r"(?ms)^\*\*Input:\*\*.*?^```text\n(.*?)^```\s*$", body.split("````markdown")[0])
+            if not out:
+                print("BAD  %-10s no ````markdown translation block" % name)
+                bad += 1
+                continue
+            out_path = Path(tmp) / ("%s.md" % name.replace(" ", "-"))
+            out_path.write_text(out.group(1), encoding="utf-8")
+            truth_path = None
+            if src:
+                truth_path = Path(tmp) / ("%s.truth.txt" % name.replace(" ", "-"))
+                truth_path.write_text(src.group(1), encoding="utf-8")
+            res = run_checks(out_path, truth_path, DEFAULT_CODEBOOK, schema)
+            failed = [g for g in GATES if res[g][0] == "FAIL"]
+            ok = not failed
+            note = "all four gates pass" if truth_path else "trace, coverage, shape pass (no printed lines to check fidelity against)"
+            got = note if ok else "; ".join(gate_line(g, res[g]) for g in failed)
+            print("%s  %-10s -> %s" % ("ok " if ok else "BAD", name, got))
+            bad += 0 if ok else 1
+    print("%d examples in %s; %s" % (len(parts) // 2, EXAMPLES_PATH.name,
+                                     "all pass" if bad == 0 else "%d BAD" % bad))
+    return 0 if bad == 0 else 1
+
+
 def main(argv=None):
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -769,13 +808,18 @@ def main(argv=None):
     p.add_argument("output", nargs="?", help="the translator output (markdown)")
     p.add_argument("--truth", help="ground-truth transcript: one line per non-blank printed line")
     p.add_argument("--codebook", help="codebook to check against (default: translator/reference/codebook.md)")
-    p.add_argument("--fixtures", action="store_true", help="run every fixture in tests/fixtures/")
+    p.add_argument("--fixtures", action="store_true",
+                   help="run every fixture in tests/fixtures/, then check every translation in translator/examples.md")
     args = p.parse_args(argv)
     if args.fixtures == bool(args.output):
         p.error("give either OUTPUT.md or --fixtures")
     try:
         schema = Schema(SCHEMA_PATH)
-        return main_fixtures(schema) if args.fixtures else main_single(args, schema)
+        if args.fixtures:
+            fx = main_fixtures(schema)
+            print()
+            return max(fx, main_examples(schema))
+        return main_single(args, schema)
     except ContractError as e:
         print("ERROR: %s" % e)
         return 2

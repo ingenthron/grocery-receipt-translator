@@ -8,6 +8,8 @@ Rules for entries:
 - Each printed text appears once. Ids are never reused or renumbered.
 - Category is one of the categories below, spelled exactly.
 
+The four starter entries come from the synthetic receipt in `examples.md`, example 1.
+
 ## Categories
 
 | Category |
@@ -27,3 +29,7 @@ Rules for entries:
 
 | Id | Printed text | Tracker name | Category |
 |---|---|---|---|
+| C001 | ORG BNNA | Bananas, organic | Produce |
+| C002 | NN 2% MLK 4L | Milk 2%, 4 L | Dairy & Eggs |
+| C003 | LG EGGS 12 | Eggs, large, dozen | Dairy & Eggs |
+| C004 | PAPER TOWEL 6RL | Paper towel, 6 rolls | Household |
