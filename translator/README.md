@@ -12,7 +12,7 @@ Turns a photo of a grocery receipt into a fixed table you can paste into a price
 
 ## Use it
 
-Start a new chat in the Project, attach a photo of one receipt (or paste its text), and send:
+Use the most capable Claude model you have (tested on Claude Opus 5.5; on Claude Haiku it ignored these files). Start a new chat in the Project, attach a photo of one receipt (or paste its text), and send:
 
 `Translate this receipt.`
 

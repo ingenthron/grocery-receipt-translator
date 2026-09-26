@@ -48,3 +48,9 @@ A fresh Claude agent (Claude Code subagent, Opus) was given only `translator/` (
 - The builder counted both asterisk rules on the paper: 38 and 38. The draft ground truth had 37, which was Claude Code's uncertain count. Lines 62 and 67 of `inputs/heldout-1/truth.txt` are corrected to 38. **Disclosed:** this proofread happened after run 2, and the builder knew run 2 said 38. The other 81 lines are still not proofread against the paper.
 - Run 2 re-checked against the corrected ground truth: **fidelity PASS** (83 of 83 lines; the 6 covered values read `[illegible]`), **trace PASS**, **coverage PASS**, **shape FAIL** (the two progress lines before the title). Run 2 still fails the bar, on shape alone.
 - Run 1 re-checked: still fails all four gates.
+
+## 2026-09-25 21:28: change after run 2 (not yet re-run)
+
+- `translator/rules.md`, step 8: forbids progress notes before the title, the one thing run 2 failed on, and says the reply's first characters are `# Receipt translation`.
+- `translator/README.md`: names the tested model (Claude Opus 5.5) and says the folder failed on Claude Haiku (run 1).
+- Made after both heldout-1 runs, so any later run on heldout-1 is labelled "seen". Nothing else in `translator/` changed.

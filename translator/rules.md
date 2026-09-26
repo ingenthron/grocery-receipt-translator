@@ -41,7 +41,7 @@ List every source line that no value in B, C or D cites, in order, with `no-fiel
 
 ## 8. Check before you send
 
-- The output starts with `# Receipt translation` and ends with the ledger table. No greeting, note, summary or explanation before or after it. The output itself is not inside a code block; only the section A lines are, in one ```` ```text ```` block.
+- The output starts with `# Receipt translation` and ends with the ledger table. No greeting, note, summary or explanation before or after it, and no progress notes while you work (such as "reading the receipt at higher zoom"): if you zoom in or check glyphs, do it silently. The first characters of your reply are `# Receipt translation`. The output itself is not inside a code block; only the section A lines are, in one ```` ```text ```` block.
 - Every value is a sentinel, or whole tokens on the one line it cites, or a codebook value whose entry matches its row exactly.
 - Every source line is cited at least once or listed in the ledger, never both.
 - Every heading and column is exactly as in `reference/output-schema.md`.
