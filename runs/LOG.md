@@ -42,3 +42,9 @@ A fresh Claude agent (Claude Code subagent, Opus) was given only `translator/` (
 - **Fidelity FAIL:** 81 of 83 lines match the ground truth exactly. The two asterisk rules (R62, R67) have 38 asterisks in the output and 37 in the unproofread ground truth. Claude Code's own count, made while drafting, was uncertain between 37 and 38; only the paper settles it, and the builder has been asked to count.
 - **Shape FAIL:** two progress lines, written while the model zoomed into the photo, come before `# Receipt translation`. The rules forbid anything before the title; the model broke that rule. The body alone passes shape (a diagnostic, not the bar).
 - Field placement, by reading: correct throughout. Store name `SUPERSTORE` is taken from R03; the logo lines R01 and R02 are ledgered, never joined. Qty `1` and Unit price `$4.93 ea` come from the printed `1 @ $4.93 ea`; nothing is assumed. The limit lines (`$4.93 lmt 5, $7.19 ea`) are ledgered as no-field.
+
+## 2026-09-25 21:26: ground-truth correction (asterisk rules); run 2 re-checked
+
+- The builder counted both asterisk rules on the paper: 38 and 38. The draft ground truth had 37, which was Claude Code's uncertain count. Lines 62 and 67 of `inputs/heldout-1/truth.txt` are corrected to 38. **Disclosed:** this proofread happened after run 2, and the builder knew run 2 said 38. The other 81 lines are still not proofread against the paper.
+- Run 2 re-checked against the corrected ground truth: **fidelity PASS** (83 of 83 lines; the 6 covered values read `[illegible]`), **trace PASS**, **coverage PASS**, **shape FAIL** (the two progress lines before the title). Run 2 still fails the bar, on shape alone.
+- Run 1 re-checked: still fails all four gates.

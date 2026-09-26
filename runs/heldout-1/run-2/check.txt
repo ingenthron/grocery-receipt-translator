@@ -1,5 +1,5 @@
-FAIL fidelity: [1] R62 reads '**************************************' but the ground truth line 62 is '*************************************' [2] R67 reads '**************************************' but the ground truth line 67 is '*************************************' (83 lines; 6 [illegible] marks on 6 lines)
+PASS fidelity (83 lines; 6 [illegible] marks on 6 lines)
 PASS trace
 PASS coverage
 FAIL shape: [1] line 1 must be exactly '# Receipt translation', found 'Reading the receipt at higher zoom so the line-by-line transcription is exact; one more section to check, then the translation.' [2] between the title and the first section there must be exactly one status line (one of: Status: translated; Status: not translated (not-a-receipt); Status: not translated (more-than-one-receipt); Status: not translated (no-input)); found ["Still transcribing: the receipt is a low-resolution photo, so I'm checking the uncertain glyphs and counting the asterisk rules before I write the translation.", '# Receipt translation', 'Status: translated']
-RESULT: FAIL (fidelity, shape)
+RESULT: FAIL (shape)
