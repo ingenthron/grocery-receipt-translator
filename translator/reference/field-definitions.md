@@ -38,6 +38,7 @@ Rows come only from the item area: the lines after the store's header (the lines
 | Qty | A count or weight printed apart from the name, such as `2` in `2 @ 1.99` or `1.234 kg`. A size in the name is not a quantity. A row with no printed count or weight says `not in source`; it is never assumed to be 1 | `not in source` |
 | Unit price | The price per item or per unit as printed, such as `2.49` or `$3.30/kg` or `2/$5.00`. Never worked out from the amount and quantity | `not in source` |
 | Amount | The line's printed amount, in the amount column, as printed (`1.88`, `-1.00`, `1.00-`) | `not in source` |
+| Price note | The whole text of any line that continues this row and is not the line its Qty, Unit price or Amount come from, such as a sale and regular price (`$4.93 lmt 5, $7.19 ea`) or a promotion printed under the item. One value per note line, joined with ` ; ` | `not in source` |
 | Tax code | A separate token of letters printed with the amount to show how it is taxed, such as `G`, `GP` or `H`. If the letters are joined to the amount in one token (`3.49GC`), that whole token is the Amount and Tax code is `not in source` | `not in source` |
 | Tracker name | The Tracker name of the codebook entry whose Printed text exactly equals this row's As printed text, cited `{Cnnn}` | `not in codebook` |
 | Category | The Category of the same codebook entry, cited `{Cnnn}` | `not in codebook` |
@@ -50,4 +51,8 @@ Every source line that no value in B, C or D cites, in line order: its id (`R12`
 
 ## F. Spreadsheet rows
 
-The same rows as section D, for pasting into a price-tracking spreadsheet: one row per D row, values only. Date and Store repeat the receipt's Date and Store name from B on every row, so each row stands alone in a price log. Every cell is copied from `output-schema.md`'s mapping, with its citation removed; nothing in F is looked up, reformatted or worked out. To check any F cell, find the same cell in B or D, where its citation is.
+The same rows as section D (As printed, Qty, Unit price, Amount, Price note, Tracker name, Category), for pasting into a price-tracking spreadsheet: one row per D row, values only. Date and Store repeat the receipt's Date and Store name from B on every row, so each row stands alone in a price log. Every cell is copied from `output-schema.md`'s mapping, with its citation removed; nothing in F is looked up, reformatted or worked out. To check any F cell, find the same cell in B or D, where its citation is.
+
+## G. Codebook to-do
+
+The items this receipt printed that your codebook does not know yet: each distinct As printed text from D whose Tracker name is `not in codebook`, in the order D first shows it, without its citation. Tracker name and Category are left empty for you. To grow the codebook, copy a row into `codebook.md`, give it the next id, and fill in your name and one of the listed categories. The translator never fills them in.

@@ -1,0 +1,1 @@
+G leaves out DEPOSIT, which D row 4 marks not in codebook.

@@ -4,8 +4,8 @@ Follow these steps in order for every receipt. The shape is in `reference/output
 
 ## 1. Decide the status
 
-- One receipt, as a photo or as pasted text: `Status: translated`.
-- Not a receipt: `Status: not translated (not-a-receipt)`. Two or more receipts: `Status: not translated (more-than-one-receipt)`. No image and no receipt text: `Status: not translated (no-input)`. For these, write the template with every section body `none`, and stop.
+- One receipt, as a photo, as up to three photos of overlapping sections of the same receipt sent together, or as pasted text: `Status: translated`.
+- Not a receipt: `Status: not translated (not-a-receipt)`. Two or more different receipts (in one photo or across photos): `Status: not translated (more-than-one-receipt)`. No image and no receipt text: `Status: not translated (no-input)`. For these, write the template with every section body `none`, and stop.
 - A receipt that is cut off, faded, creased or blurry is still one receipt. Translate what shows.
 - A receipt from a store that is not a grocery store is still a receipt. Translate it.
 
@@ -14,6 +14,7 @@ Follow these steps in order for every receipt. The shape is in `reference/output
 - Every non-blank printed line, top to bottom, numbered `R01` upward, copied character for character: same spelling, same case, same abbreviations, same symbols.
 - Any character you are not sure of is `[illegible]`. So is anything covered by paper, a box or a finger. Never guess, and never "fix" what looks like a typo.
 - A rule of repeated symbols (`*****`) needs its exact count. If you cannot be sure of it, the whole line is `[illegible]`.
+- Several photos of one long receipt: transcribe it once, top to bottom. Where two photos overlap, write each repeated line once.
 - This is the only step that reads the photo. Every later step copies from your section A lines, so every value you write is already sitting on the line you cite.
 
 ## 3. Receipt fields (section B)
@@ -30,6 +31,7 @@ One row per printed tax line: its label tokens and its amount, each cited. No ta
 - A line that only continues the row above belongs to that row. Example: `R07 PC ORG BNNA` then `R08 1.234 kg @ $1.52/kg 1.88` is one row: As printed `PC ORG BNNA {R07}`, Qty `1.234 kg {R08}`, Unit price `$1.52/kg {R08}`, Amount `1.88 {R08}`.
 - Rows come only from the lines between the store's header (the lines at the top, before the first item or department heading) and the subtotal. A line there with no amount, that the next line does not continue, is a heading such as `PRODUCE`: not a row, it goes in the ledger.
 - A discount or deposit printed under an item is its own row, with its own printed words in As printed.
+- A line that continues a row but is not where its Qty, Unit price or Amount come from (a sale and regular price such as `$4.93 lmt 5, $7.19 ea`) goes whole into Price note, cited. It is never split, read or worked out.
 - Copy whole tokens only, `$` and all, exactly as printed. For `RED PEPPERS 2 @ 1.99 3.98 G`: As printed `RED PEPPERS`, Qty `2`, Unit price `1.99`, Amount `3.98`, Tax code `G`. If a line prints only a name and an amount, Qty and Unit price are `not in source`. A size in the name (`4L`) stays in As printed. A quantity is never assumed to be 1, and a unit price is never worked out.
 
 ## 6. Look up the codebook
@@ -42,14 +44,19 @@ List every source line that no value in B, C or D cites, in order, with `no-fiel
 
 ## 8. Spreadsheet rows (section F)
 
-Copy section D again, row for row, as values only: for each row, the receipt's Date and Store name from section B, then the row's As printed, Qty, Unit price, Amount, Tracker name and Category from section D. Remove each `{...}` citation; copy sentinels as they are. Nothing in F is new: every cell is already above.
+Copy section D again, row for row, as values only: for each row, the receipt's Date and Store name from section B, then the row's As printed, Qty, Unit price, Amount, Price note, Tracker name and Category from section D. Remove each `{...}` citation; copy sentinels as they are. Nothing in F is new: every cell is already above.
 
-## 9. Check before you send
+## 9. Codebook to-do (section G)
 
-- The output starts with `# Receipt translation` and ends with the spreadsheet rows table. No greeting, note, summary or explanation before or after it, and no progress notes while you work (such as "reading the receipt at higher zoom" or "I'll read the spec files first"): if you open the project files, zoom in or check glyphs, do it silently. The first characters of your reply are `# Receipt translation`. The output itself is not inside a code block; only the section A lines are, in one ```` ```text ```` block.
+List each distinct As printed text from D whose Tracker name is `not in codebook`, in the order D first shows it, without its citation, and leave Tracker name and Category empty. Skip `[illegible]` and `not in source`. If every item has a codebook entry, the one row is `none | none | none`. Never suggest a name or category.
+
+## 10. Check before you send
+
+- The output starts with `# Receipt translation` and ends with the codebook to-do table. No greeting, note, summary or explanation before or after it, and no progress notes while you work (such as "reading the receipt at higher zoom" or "I'll read the spec files first"): if you open the project files, zoom in or check glyphs, do it silently. The first characters of your reply are `# Receipt translation`. The output itself is not inside a code block; only the section A lines are, in one ```` ```text ```` block.
 - Every value is a sentinel, or whole tokens on the one line it cites, or a codebook value whose entry matches its row exactly.
 - Every source line is cited at least once or listed in the ledger, never both.
-- Every row of F repeats its row of D (As printed, Qty, Unit price, Amount, Tracker name, Category) without citations, with the Date and Store name from B.
+- Every row of F repeats its row of D (As printed, Qty, Unit price, Amount, Price note, Tracker name, Category) without citations, with the Date and Store name from B.
+- G lists exactly the `not in codebook` printed texts, once each, with empty name and category.
 - Every heading and column is exactly as in `reference/output-schema.md`.
 
 ## Never add

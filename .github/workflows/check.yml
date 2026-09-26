@@ -18,3 +18,5 @@ jobs:
           python-version: "3.x"
       - name: Run the checker on every fixture
         run: python verify/check.py --fixtures
+      - name: Test the price log
+        run: python -m unittest discover -s tests -p "test_*.py" -v

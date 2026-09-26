@@ -8,6 +8,8 @@ BANANAS
 GRN ONIONS            1.29
 SPRKL WTR 1L
 2 @ 2.49              4.98 GP
+$2.49 lmt 4, $3.29 ea
+YOU SAVED           $1.60
 DEPOSIT               0.20
 MULTI-BUY SAVINGS    -1.00 GP
 SUBTOTAL              7.02

@@ -2,7 +2,7 @@
 
 A Claude Project folder that turns a photo of a grocery receipt into a fixed table for a price-tracking spreadsheet. Every value in the table either is printed on the receipt, cited to its line as `{R08}`, or comes from your own codebook, cited to its entry as `{C001}`. Anything else is `not in source`, `[illegible]` or `not in codebook`. Nothing is guessed.
 
-The output ends with the same items as clean spreadsheet rows (date, store, item as printed, quantity, unit price, amount, your name and category), and the checker proves each of those cells is a copy of a cited one.
+The output also gives the same items as clean spreadsheet rows (date, store, item as printed, quantity, unit price, amount, any sale or regular price printed under it, your name and category), which the checker proves are copies of cited cells, and a to-do list of the items your codebook does not know yet.
 
 **Judged version:** tag [`comp13-submission`](https://github.com/ingenthron/grocery-receipt-translator/tree/comp13-submission) (commit `7a151a3`), the last commit before the Clief Notes Comp #13 deadline. Everything after it is listed, with the reason, in [`runs/LOG.md`](runs/LOG.md).
 
@@ -16,6 +16,16 @@ Everything you need is in [`translator/`](translator/). Its [README](translator/
 
 A translator has to move from the receipt's words (`ORG BNNA`) to the spreadsheet's words (`Bananas, organic`) without inventing anything. Here the only way a word the receipt does not print can reach the output is [`translator/reference/codebook.md`](translator/reference/codebook.md): a table you write, mapping an exact printed text to your name and category. The translator applies entries and never adds one. Items with no entry come back `not in codebook`, which tells you what to add next. So every value cites a source you can open: the receipt line, or the codebook entry.
 
+## Keep a price log
+
+Once a translation checks out, one command adds its spreadsheet rows to your own log:
+
+```
+python tools/log.py output.md
+```
+
+It runs the checker first and **writes nothing unless the translation passes**, so a misread price or an invented total never reaches your price history. It refuses to log the same receipt twice. The log is `prices/prices.csv`, which stays on your machine (it is in `.gitignore`).
+
 ## Check it yourself
 
 Python 3, standard library only, offline, no API key:
@@ -24,7 +34,7 @@ Python 3, standard library only, offline, no API key:
 python verify/check.py --fixtures
 ```
 
-This runs 23 fixtures (one clean translation that must pass, and 22 broken ones, each named after a failure the brief lists or a way to fake the spreadsheet rows or the ledger, that must each fail through the gate they declare), then checks every translation in `translator/examples.md`. It ends with `23 fixtures, 22 red; all behave as declared` and `3 examples in examples.md; all pass`. CI runs the same on Ubuntu and Windows.
+This runs 27 fixtures (one clean translation that must pass, and 26 broken ones, each named after a failure the brief lists or a way to fake the spreadsheet rows, the codebook to-do or the ledger, that must each fail through the gate they declare), then checks every translation in `translator/examples.md`. It ends with `27 fixtures, 26 red; all behave as declared` and `3 examples in examples.md; all pass`. The price-log tool has its own tests: `python -m unittest discover -s tests`. CI runs the same on Ubuntu and Windows.
 
 To check a translation of your own: `python verify/check.py output.md --truth truth.txt`, where `truth.txt` is the receipt typed out line by line. The four gates are fidelity (the numbered lines match the receipt), trace (each value is whole words on the line it cites, so the right value on the neighbouring line fails), coverage (every line is used or listed in the ledger) and shape. The contract the checker enforces is read from `translator/reference/`, so the two cannot drift apart.
 

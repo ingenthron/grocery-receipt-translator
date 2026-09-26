@@ -6,21 +6,28 @@ TEST_METHOD.md (fidelity, trace, coverage, shape), with the trace-gate
 correction for codebook citations logged in runs/LOG.md on 2026-09-25.
 
 The contract is read, not copied: section headings, status lines, receipt
-fields and their multi-value flags, table columns, sentinels, reason codes
-and the section F copy map (which cell above each spreadsheet column is
-copied from) come from the markdown tables in
+fields and their multi-value flags, table columns, sentinels, reason codes,
+the section F copy map (which cell above each spreadsheet column is copied
+from) and which D columns may hold several values (a '## <column> (section D)'
+paragraph saying the column 'may hold more than one value') come from
 translator/reference/output-schema.md, and categories and entries come from
 the codebook's tables. The few names the checker has to reason about (the
-sentinels below, the reason code `illegible`, the column `As printed`, the
-codebook columns `Id` and `Printed text`, the copy-map columns `F column` and
-`Copied from`) are named here, and the checker stops with an error if the
-reference files no longer define them. So the checker and the contract
-cannot drift apart silently.
+sentinels below, the reason code `illegible`, the columns `As printed` and
+`Tracker name`, the codebook columns `Id` and `Printed text`, the copy-map
+columns `F column` and `Copied from`) are named here, and the checker stops
+with an error if the reference files no longer define them. So the checker
+and the contract cannot drift apart silently.
 
 Section F is judged under trace (each cell must be the cell it copies,
 without its citation, and F has one row per D row) and under shape (its
-heading and columns). Ledger rows in E name one line (R07) or a range
-(R40-R62, both ends included); ranges are expanded for coverage.
+heading and columns). A multi-value D cell (Price note) is copied with every
+citation removed and its ' ; ' separators kept. Section G, the codebook
+to-do, is judged under trace (exactly the distinct As printed texts of the D
+rows whose Tracker name is `not in codebook`, in first-appearance order,
+leaving out `[illegible]` and `not in source`; its name and category cells
+empty; `none` when there is nothing to list) and under shape (its heading
+and columns). Ledger rows in E name one line (R07) or a range (R40-R62, both
+ends included); ranges are expanded for coverage.
 
 Standard library only, Python 3.8+, offline, no API key.
 
@@ -52,13 +59,17 @@ NOT_IN_CODEBOOK = "not in codebook"
 NONE = "none"
 ILLEGIBLE_REASON = "illegible"
 AS_PRINTED = "As printed"
+TRACKER = "Tracker name"   # the D column whose `not in codebook` puts a row on the G to-do list
 CB_ID = "Id"
 CB_PRINTED = "Printed text"
 COPY_MAP = "Spreadsheet rows (section F)"   # schema heading of the F copy map
 COPY_COL, COPY_FROM = "F column", "Copied from"
 SAME_ROW = "same row"
+MULTI_PHRASE = "more than one value"   # in a '## <column> (section D)' paragraph
 # Section roles, by letter. The schema's Sections table must list exactly these.
-SOURCE, FIELDS, TAXES, ITEMS, LEDGER, SHEET = "A", "B", "C", "D", "E", "F"
+SOURCE, FIELDS, TAXES, ITEMS, LEDGER, SHEET, TODO = "A", "B", "C", "D", "E", "F", "G"
+ROLES = [SOURCE, FIELDS, TAXES, ITEMS, LEDGER, SHEET, TODO]
+TABLES = (FIELDS, TAXES, ITEMS, LEDGER, SHEET, TODO)
 
 FENCE_RE = re.compile(r"^(`{3,}|~{3,})(.*)$")
 SEP_RE = re.compile(r"^\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)*\|?$")
@@ -186,9 +197,9 @@ class Schema(object):
 
         _, rows = table("Sections", ["Section", "Heading (exact)"])
         self.sections = [(r[0], r[1]) for r in rows]  # [(letter, '## A. Source lines')]
-        if [L for L, _ in self.sections] != [SOURCE, FIELDS, TAXES, ITEMS, LEDGER, SHEET]:
-            raise ContractError("%s: sections are %s; check.py knows the roles of A to F only"
-                                % (self.path.name, [L for L, _ in self.sections]))
+        if [L for L, _ in self.sections] != ROLES:
+            raise ContractError("%s: sections are %s; check.py knows the roles of %s only"
+                                % (self.path.name, [L for L, _ in self.sections], ", ".join(ROLES)))
 
         _, rows = table("Status values", ["Status line (exact)"])
         self.statuses = [r[0] for r in rows]
@@ -203,11 +214,27 @@ class Schema(object):
 
         _, rows = table("Table columns", ["Section", "Columns (exact, in order)"])
         self.columns = {r[0]: [c.strip() for c in r[1].split(",")] for r in rows}
-        for L in (FIELDS, TAXES, ITEMS, LEDGER, SHEET):
+        for L in TABLES:
             if L not in self.columns:
                 raise ContractError("%s: no columns listed for section %s" % (self.path.name, L))
-        if AS_PRINTED not in self.columns[ITEMS]:
-            raise ContractError("%s: section D has no '%s' column" % (self.path.name, AS_PRINTED))
+        for col in (AS_PRINTED, TRACKER):
+            if col not in self.columns[ITEMS]:
+                raise ContractError("%s: section D has no '%s' column" % (self.path.name, col))
+        if self.columns[TODO][:1] != [CB_PRINTED]:
+            raise ContractError("%s: section G's first column must be '%s' (the codebook key), found %s"
+                                % (self.path.name, CB_PRINTED, self.columns[TODO]))
+
+        # Columns that may hold several values joined with ' ; ': a paragraph
+        # headed '## <column> (section <letter>)' that says the column may hold
+        # 'more than one value' (B's multi-value flags are per field, above).
+        self.multi_cols = set()
+        for name, (s, e) in secs.items():
+            m = re.match(r"^(?P<col>.+) \(section (?P<L>[A-Z])\)$", name)
+            if not m or m.group("L") not in self.columns or m.group("col") not in self.columns[m.group("L")]:
+                continue
+            body = " ".join(lines[i] for i in range(s, e) if not mask[i])
+            if MULTI_PHRASE in body:
+                self.multi_cols.add((m.group("L"), m.group("col")))
 
         # Section F copy map: F column -> (B, field) or (D, column) in the same row.
         _, rows = table(COPY_MAP, [COPY_COL, COPY_FROM])
@@ -260,6 +287,10 @@ class Schema(object):
     def value_columns(self, letter):
         cols = self.columns[letter]
         return [c for c in cols if not (letter == FIELDS and c == self.field_label)]
+
+    def is_multi(self, letter, col):
+        """True if cells of this column (outside B) may hold several cited values."""
+        return (letter, col) in self.multi_cols
 
     def uncited_ok(self, letter, col):
         return {name for name, (secs_ok, cols_ok) in self.places.items()
@@ -344,7 +375,7 @@ class Output(object):
                 if line in expected:
                     self.body.setdefault(letters[expected.index(line)], b)
         self._parse_source()
-        self.tables = {L: self._table(L) for L in (FIELDS, TAXES, ITEMS, LEDGER, SHEET)}
+        self.tables = {L: self._table(L) for L in TABLES}
 
     def _parse_source(self):
         self.a_block = None      # (first, last+1) line indices of the fenced block
@@ -508,10 +539,11 @@ def check_trace(out, schema, cb):
             label = "D row %d (%s)" % (n, ap)
             for col, cell in zip(t.header, row):
                 if col not in cb_cols:
-                    check_cell("%s %s" % (label, col), ITEMS, col, cell, False)
+                    check_cell("%s %s" % (label, col), ITEMS, col, cell, schema.is_multi(ITEMS, col))
             check_codebook_row(label, cells, ap, cb_cols, src, cb, problems)
 
     check_sheet(out, schema, problems)
+    check_todo(out, schema, cb, problems)
     return problems
 
 
@@ -564,9 +596,101 @@ def check_sheet(out, schema, problems):
                 if name not in dcells:
                     continue  # D is missing the column or the cell: shape reports it
                 source, desc = dcells[name], "D row %d %s" % (n, name)
-                want = uncite(source)
+                want = uncite(source, schema.is_multi(ITEMS, name))
             if cell != want:
                 problems.append("%s: '%s' is not the %s '%s' without its citation" % (where, cell, desc, want))
+
+
+def todo_expected(out):
+    """What section G must list, from section D: [(key, text, D row number)]
+    for each distinct As printed text (citation removed) on a row whose
+    Tracker name is `not in codebook`, in the order D first shows it.
+    [illegible] and `not in source` cannot be codebook keys and are left out."""
+    d = out.tables[ITEMS]
+    want, seen = [], set()
+    if d is None or AS_PRINTED not in d.header or TRACKER not in d.header:
+        return None  # shape reports the missing section or column
+    for n, row in enumerate(d.rows, 1):
+        cells = dict(zip(d.header, row))
+        if cells.get(TRACKER) != NOT_IN_CODEBOOK:
+            continue
+        text = uncite(cells.get(AS_PRINTED, ""))
+        key = collapse(text)
+        if not key or key == NOT_IN_SOURCE or ILLEGIBLE in key or key in seen:
+            continue
+        seen.add(key)
+        want.append((key, text, n))
+    return want
+
+
+def check_todo(out, schema, cb, problems):
+    """Section G: exactly the distinct D items that are `not in codebook`,
+    in first-appearance order, copied without citation, with the name and
+    category cells left empty; one `none` row when there is nothing to list.
+    A missing G section or a wrong G header is shape's to report."""
+    g = out.tables[TODO]
+    want = todo_expected(out)
+    if g is None or want is None:
+        return
+    empty_cols = schema.columns[TODO][1:]
+    wanted = {key: (text, n) for key, text, n in want}
+    listing = ", ".join("'%s' (D row %d)" % (text, n) for _, text, n in want)
+
+    if any(row and row[0] == NONE for row in g.rows):
+        if len(g.rows) != 1 or any(c != NONE for c in g.rows[0]):
+            problems.append("G: '%s' must be the only row, with '%s' in all %d cells"
+                            % (NONE, NONE, len(schema.columns[TODO])))
+        if want:
+            problems.append("G says '%s', but D has %d item%s whose %s is '%s': %s"
+                            % (NONE, len(want), "" if len(want) == 1 else "s", TRACKER, NOT_IN_CODEBOOK, listing))
+        return
+    if not want and g.rows:
+        problems.append("G: no row of D has %s '%s' (leaving out %s and %s), so G must be the one row '%s'"
+                        % (TRACKER, NOT_IN_CODEBOOK, ILLEGIBLE, NOT_IN_SOURCE,
+                           " | ".join([NONE] * len(schema.columns[TODO]))))
+
+    listed = {}  # key -> G row number
+    for n, row in enumerate(g.rows, 1):
+        printed = row[0] if row else ""
+        where = "G row %d (%s)" % (n, printed)
+        filled = ["%s '%s'" % (c, v) for c, v in zip(empty_cols, row[1:]) if v != ""]
+        if filled:
+            problems.append("%s: %s filled in; G must never propose a name: %s stay%s empty for the owner to fill"
+                            % (where, " and ".join(filled), " and ".join(empty_cols),
+                               "" if len(empty_cols) != 1 else "s"))
+        if ANY_CITE_RE.search(printed):
+            problems.append("%s: '%s' carries a citation; G copies As printed without it" % (where, printed))
+            printed = uncite(printed)
+        key = collapse(printed)
+        if not key:
+            problems.append("%s: empty %s" % (where, schema.columns[TODO][0]))
+            continue
+        entry = cb.by_printed.get(key)
+        if entry:
+            problems.append("%s: '%s' has codebook entry %s; G lists only items that are '%s'"
+                            % (where, printed, entry[CB_ID], NOT_IN_CODEBOOK))
+        if key in listed:
+            problems.append("%s: '%s' is listed again (first at G row %d); G lists each item once"
+                            % (where, printed, listed[key]))
+        elif key in wanted:
+            listed[key] = n
+            text, drow = wanted[key]
+            if printed != text:
+                problems.append("%s: '%s' is not D row %d's As printed '%s' without its citation"
+                                % (where, printed, drow, text))
+        elif not entry:
+            problems.append("%s: '%s' is not the As printed text of any D row whose %s is '%s'"
+                            % (where, printed, TRACKER, NOT_IN_CODEBOOK))
+
+    missing = [(text, n) for key, text, n in want if key not in listed]
+    for text, n in missing:
+        problems.append("G is missing '%s' (D row %d), whose %s is '%s'; G lists every such item once"
+                        % (text, n, TRACKER, NOT_IN_CODEBOOK))
+    got_order = sorted(listed, key=lambda k: listed[k])
+    want_order = [key for key, _, _ in want if key in listed]
+    if got_order != want_order:
+        problems.append("G lists its items in the order %s; D first shows them in the order %s"
+                        % (", ".join(got_order), ", ".join(want_order)))
 
 
 def check_codebook_row(label, cells, ap, cb_cols, src, cb, problems):

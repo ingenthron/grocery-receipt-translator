@@ -2,3 +2,7 @@
 _private/
 # Build-session instructions for Claude Code (local only; the entry is the five judged files).
 CLAUDE.md
+# The verified price log (tools/log.py): private shopping history, never committed.
+prices/
+# Python bytecode caches (tools/log.py and the tests import verify/check.py).
+__pycache__/

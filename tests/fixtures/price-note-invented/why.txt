@@ -1,0 +1,1 @@
+GRN ONIONS given a Price note with a regular price, REG 1.49, that R08 does not print (R08 prints GRN ONIONS 1.29).

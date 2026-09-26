@@ -11,6 +11,7 @@ How values, lines and citations are written. `output-schema.md` says where thing
 - If you are given receipt text that already says `[redacted]`, copy it as `[redacted]`, like any other printed text.
 - A line made only of one repeated symbol (a rule of `*` or `-`) must have exactly the printed count. If you cannot be sure of the count, write the whole line as `[illegible]`: a wrong count is a wrong line. Receipt text you are given (not a photo) is copied exactly as given, rules included.
 - A receipt that continues past the edge of the photo ends at the last line the photo shows.
+- A long receipt may come as up to three photos of overlapping sections. Transcribe it once, top to bottom: a line that appears in two photos is one source line, written once.
 
 ## Values
 
@@ -27,7 +28,7 @@ How values, lines and citations are written. `output-schema.md` says where thing
 
 ## Several values in one cell
 
-Only where `output-schema.md` allows multiple values (Store address). Each value carries its own citation, and values are separated by ` ; ` (space, semicolon, space):
+Only where `output-schema.md` allows multiple values (Store address, Price note). Each value carries its own citation, and values are separated by ` ; ` (space, semicolon, space):
 
 `1234 ALBERT ST {R02} ; REGINA SK S4P 2Z5 {R03}`
 
