@@ -11,7 +11,9 @@ Every receipt here was bought and photographed by the builder, who consents to p
 | Photographed | 2026-09-25, Pixel 9 phone camera, on a wooden floor |
 | Assigned | Held out, 2026-09-25, before Claude Code opened the photo; opened after translator commit `69e3654` |
 
-**What was changed in `receipt.jpg`, and nothing else:**
+**The photo is not published.** At the builder's request it was kept out of this repo, and removed from the history before the first push; the runs used the pseudonymized copy described below, kept by the builder. The receipt's full text, pseudonymized, is `heldout-1/truth.txt`: paste it into the Project as the input to run this receipt yourself.
+
+**What was changed in the pseudonymized photo used for the runs, and nothing else:**
 
 - All metadata removed, including the phone's GPS location: the published file is the pixels only, re-saved as JPEG (quality 92).
 - Cropped to the receipt (the original is 3072 x 4080; the crop is 990 x 3860 at full resolution, not scaled).

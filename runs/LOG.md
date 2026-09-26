@@ -27,3 +27,8 @@ A fresh Claude agent (Claude Code subagent, Opus) was given only `translator/` (
 - Output verbatim: `runs/heldout-1/run-1/output.md`. Checker: `runs/heldout-1/run-1/check.txt` (FAIL shape).
 - The reply opens "The receipt is already in English", so the model read "translate" as changing language and did not follow `identity.md`. Against the receipt, it: invented a total (`$134.08`; the receipt prints `134.88`); invented item names (`Diko Yogurt` for `OIKO YGRT`, `PC Home Gallon Bags` for `PC ASHWD GRL BRS`, `Luma PC Salad` for `QUPA TC SALTED`, `WM` for `NN` throughout); gave wrong prices (`$1.49` for the yogurt's `4.93`, `$4.93` for `4.99`); dropped the eggs line and the GST line; labelled `0.72` (the PST) as GST; added categories and a reformatted date.
 - **Checker defect found by this run:** trace and coverage printed PASS on an output with no sections, because there was nothing to check. They should fail. Fixed in the next commit.
+
+## 2026-09-25 21:12: run 1 setup confirmed; photo withheld
+
+- The builder confirms the run-1 Project had all seven files and the instruction line. Run 1 is therefore a failure of this translator on Claude Haiku, not a setup error.
+- At the builder's request the photo is not published. It was removed from the two unpushed commits that contained it before the first push; nothing else in them changed. `inputs/heldout-1/truth.txt` (the receipt's pseudonymized text) stays, so the receipt can be run as pasted text.

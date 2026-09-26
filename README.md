@@ -28,7 +28,7 @@ To check a translation of your own: `python verify/check.py output.md --truth tr
 
 The test method was written and committed before anything else ([`TEST_METHOD.md`](TEST_METHOD.md), first commit). Every run, failure and change is in [`runs/LOG.md`](runs/LOG.md), in time order.
 
-- **Held-out real receipt, run 1: FAIL.** A real Superstore receipt ([`inputs/heldout-1/`](inputs/heldout-1/), pseudonymized, see [`PROVENANCE.md`](inputs/PROVENANCE.md)), run with Claude Haiku. The reply ignored the translator ("The receipt is already in English") and invented a total, item names and prices. Kept verbatim in [`runs/heldout-1/run-1/`](runs/heldout-1/run-1/). It shows what this folder exists to prevent; it is also a failure of this folder on that model.
+- **Held-out real receipt, run 1: FAIL.** A real Superstore receipt, run from its pseudonymized photo with Claude Haiku, in a Project set up exactly as `translator/README.md` says (all seven files and the instruction line, confirmed by the builder). The photo is not published; the receipt's pseudonymized text is [`inputs/heldout-1/truth.txt`](inputs/heldout-1/truth.txt), and you can paste it into the Project to run the same receipt ([`PROVENANCE.md`](inputs/PROVENANCE.md)). The reply ignored the translator ("The receipt is already in English") and invented a total, item names and prices. Kept verbatim in [`runs/heldout-1/run-1/`](runs/heldout-1/run-1/). It shows what this folder exists to prevent; it is also a failure of this folder on that model.
 - **Cold walk:** a fresh agent given only the folder translated a synthetic receipt; its output passes all four gates, and the nine places it had to guess were clarified ([`evidence/cold-walk-1/`](evidence/cold-walk-1/)).
 
 ## Not done, said plainly
