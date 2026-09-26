@@ -9,6 +9,7 @@ How values, lines and citations are written. `output-schema.md` says where thing
 - Copy every character as printed: same spelling, same case, same abbreviations, same symbols. Runs of spaces may be written as one space.
 - Anything that cannot be read, or is covered, is written `[illegible]`, for one character, one word, or the whole line. Never guess a character.
 - If you are given receipt text that already says `[redacted]`, copy it as `[redacted]`, like any other printed text.
+- A line made only of one repeated symbol (a rule of `*` or `-`) must have exactly the printed count. If you cannot be sure of the count, write the whole line as `[illegible]`: a wrong count is a wrong line. Receipt text you are given (not a photo) is copied exactly as given, rules included.
 - A receipt that continues past the edge of the photo ends at the last line the photo shows.
 
 ## Values
@@ -20,8 +21,9 @@ How values, lines and citations are written. `output-schema.md` says where thing
 ## Citations
 
 - A value copied from the receipt ends with a space and the line it came from in braces: `1.88 {R08}`.
-- A value taken from the codebook ends with a space and the entry id in braces: `Bananas, organic {C014}`.
+- A value taken from the codebook ends with a space and the entry id in braces: `Bananas, organic {C001}`.
 - Sentinels (`not in source`, `not in codebook`, `none`) have no citation. `[illegible]` in a value cell is cited to its line.
+- Section F has no citations at all: its cells are copies of cells in B and D, which carry them.
 
 ## Several values in one cell
 

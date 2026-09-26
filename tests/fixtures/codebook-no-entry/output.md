@@ -57,10 +57,19 @@ R20 THANK YOU FOR SHOPPING
 
 ## E. Coverage ledger
 
-| Line | Reason |
+| Lines | Reason |
 |---|---|
-| R04 | no-field |
-| R05 | no-field |
+| R04-R05 | no-field |
 | R17 | no-field |
 | R19 | illegible |
 | R20 | no-field |
+
+## F. Spreadsheet rows
+
+| Date | Store | As printed | Qty | Unit price | Amount | Tracker name | Category |
+|---|---|---|---|---|---|---|---|
+| 09/20/26 | PRAIRIE FRSH MKT #0412 | BANANAS | 1.020 kg | not in source | 1.55 | Bananas | Produce |
+| 09/20/26 | PRAIRIE FRSH MKT #0412 | GRN ONIONS | not in source | not in source | 1.29 | Green onions | Produce |
+| 09/20/26 | PRAIRIE FRSH MKT #0412 | SPRKL WTR 1L | 2 | 2.49 | 4.98 | not in codebook | not in codebook |
+| 09/20/26 | PRAIRIE FRSH MKT #0412 | DEPOSIT | not in source | not in source | 0.20 | not in codebook | not in codebook |
+| 09/20/26 | PRAIRIE FRSH MKT #0412 | MULTI-BUY SAVINGS | not in source | not in source | -1.00 | not in codebook | not in codebook |

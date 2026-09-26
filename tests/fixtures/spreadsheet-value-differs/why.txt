@@ -1,0 +1,1 @@
+F row 3 Amount copied as 4.89; D row 3 Amount is 4.98 {R10}.

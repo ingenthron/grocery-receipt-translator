@@ -8,7 +8,7 @@ Turns a photo of a grocery receipt into a fixed table you can paste into a price
 2. Add these files to the Project's knowledge, and nothing else:
    `identity.md`, `rules.md`, `examples.md`, and the four files in `reference/` (`output-schema.md`, `field-definitions.md`, `format-spec.md`, `codebook.md`).
 3. In the Project's instructions, paste this line:
-   `You are the receipt translator described in identity.md. Follow rules.md and the files in reference/ exactly.`
+   `You are the receipt translator described in identity.md. Follow rules.md and the files in reference/ exactly. Begin every reply with "# Receipt translation" and write nothing before it, not even a note that you are reading these files.`
 
 ## Use it
 
@@ -20,17 +20,18 @@ Photograph the whole receipt, flat, in good light. Cover card numbers and loyalt
 
 ## What comes back
 
-Always the same five parts, in the same order:
+Always the same six parts, in the same order:
 
 - **A. Source lines:** every printed line, numbered `R01`, `R02` ..., copied as printed. Anything unreadable is `[illegible]`.
 - **B. Receipt fields:** store name, address, date, time, subtotal, total.
 - **C. Taxes:** each tax line printed.
 - **D. Items:** one row per item, deposit, fee or discount: the words as printed, quantity, unit price, amount, tax code, and your tracker name and category from the codebook.
-- **E. Coverage ledger:** every line the table does not use, with the reason, so nothing is silently dropped.
+- **E. Coverage ledger:** every line the tables do not use (runs of lines as ranges, like `R40-R62`), with the reason, so nothing is silently dropped.
+- **F. Spreadsheet rows:** the items again with the date and store on each row, values only, ready to paste into your spreadsheet. Every cell is a copy of a cited cell above it, so each can still be checked.
 
 `{R08}` after a value means "printed on line R08". `{C014}` means "from codebook entry C014". `not in source` means the receipt does not print it. `not in codebook` means your codebook has no entry for that exact printed text.
 
-If you send something that is not one receipt, you get the same five parts with a status saying why it was not translated.
+If you send something that is not one receipt, you get the same six parts with a status saying why it was not translated.
 
 ## Grow your codebook
 

@@ -97,17 +97,28 @@ R22 THANK YOU FOR SHOPPING
 
 ## E. Coverage ledger
 
-| Line | Reason |
+| Lines | Reason |
 |---|---|
-| R04 | no-field |
-| R05 | no-field |
+| R04-R05 | no-field |
 | R09 | no-field |
 | R14 | no-field |
 | R20 | no-field |
 | R22 | no-field |
+
+## F. Spreadsheet rows
+
+| Date | Store | As printed | Qty | Unit price | Amount | Tracker name | Category |
+|---|---|---|---|---|---|---|---|
+| 09/24/26 | MAPLE CART GROCERY | ORG BNNA | 0.844 kg | $3.28/kg | 2.77 | Bananas, organic | Produce |
+| 09/24/26 | MAPLE CART GROCERY | RED PEPPERS | 2 | 1.99 | 3.98 | not in codebook | not in codebook |
+| 09/24/26 | MAPLE CART GROCERY | NN 2% MLK 4L | not in source | not in source | 5.49 | Milk 2%, 4 L | Dairy & Eggs |
+| 09/24/26 | MAPLE CART GROCERY | DEPOSIT | not in source | not in source | 0.25 | not in codebook | not in codebook |
+| 09/24/26 | MAPLE CART GROCERY | LG EGGS 12 | not in source | not in source | 4.79 | Eggs, large, dozen | Dairy & Eggs |
+| 09/24/26 | MAPLE CART GROCERY | MULTI BUY SAVINGS | not in source | not in source | 1.00- | not in codebook | not in codebook |
+| 09/24/26 | MAPLE CART GROCERY | PAPER TOWEL 6RL | not in source | not in source | 8.99 | Paper towel, 6 rolls | Household |
 ````
 
-Points to notice: `ORG BNNA` has no amount, but the next line continues it, so it is an item; `PRODUCE`, `DAIRY` and `HOUSEHOLD` are headings, so they go to the ledger and never become a Category. The milk and eggs have no printed quantity, so Qty is `not in source`, not 1. The covered card number is `[illegible]`, never guessed. `RED PEPPERS` has no codebook entry, so it is `not in codebook`, even though the name is obvious.
+Points to notice: `ORG BNNA` has no amount, but the next line continues it, so it is an item; `PRODUCE`, `DAIRY` and `HOUSEHOLD` are headings, so they go to the ledger and never become a Category. The milk and eggs have no printed quantity, so Qty is `not in source`, not 1. The covered card number is `[illegible]`, never guessed. `RED PEPPERS` has no codebook entry, so it is `not in codebook`, even though the name is obvious. Section F repeats section D without citations, with the date and store on every row, so it pastes into a spreadsheet as it is; every cell in it can be checked against the cell above it.
 
 ## Example 2: a torn, creased photo
 
@@ -167,9 +178,17 @@ R06 TOTAL 17.77
 
 ## E. Coverage ledger
 
-| Line | Reason |
+| Lines | Reason |
 |---|---|
 | R04 | no-field |
+
+## F. Spreadsheet rows
+
+| Date | Store | As printed | Qty | Unit price | Amount | Tracker name | Category |
+|---|---|---|---|---|---|---|---|
+| not in source | not in source | BREAD WW 675G | not in source | not in source | 3.29 | not in codebook | not in codebook |
+| not in source | not in source | BTR SALTED 454G | not in source | not in source | 6.49 | not in codebook | not in codebook |
+| not in source | not in source | CHDR MED 400G | not in source | not in source | [illegible] | not in codebook | not in codebook |
 ````
 
 Points to notice: the store, address, date and time are not in the photo, so they are `not in source`, not filled in from the store you might recognize. The creased price is `[illegible]`, even though the subtotal would let you work it out: a translator never works anything out. `675G` and `400G` are part of the names, not quantities.
@@ -202,6 +221,10 @@ none
 none
 
 ## E. Coverage ledger
+
+none
+
+## F. Spreadsheet rows
 
 none
 ````

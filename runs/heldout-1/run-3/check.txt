@@ -1,0 +1,5 @@
+FAIL fidelity: [1] R62 reads '************************************' but the ground truth line 62 is '**************************************' [2] R67 reads '************************************' but the ground truth line 67 is '**************************************' (83 lines; 7 [illegible] marks on 7 lines)
+PASS trace
+PASS coverage
+FAIL shape: [1] line 1 must be exactly '# Receipt translation', found 'The project defines the output format, so I'll read its spec files first.' [2] between the title and the first section there must be exactly one status line (one of: Status: translated; Status: not translated (not-a-receipt); Status: not translated (more-than-one-receipt); Status: not translated (no-input)); found ['# Receipt translation', 'Status: translated']
+RESULT: FAIL (fidelity, shape)

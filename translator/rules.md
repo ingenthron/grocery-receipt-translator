@@ -13,6 +13,7 @@ Follow these steps in order for every receipt. The shape is in `reference/output
 
 - Every non-blank printed line, top to bottom, numbered `R01` upward, copied character for character: same spelling, same case, same abbreviations, same symbols.
 - Any character you are not sure of is `[illegible]`. So is anything covered by paper, a box or a finger. Never guess, and never "fix" what looks like a typo.
+- A rule of repeated symbols (`*****`) needs its exact count. If you cannot be sure of it, the whole line is `[illegible]`.
 - This is the only step that reads the photo. Every later step copies from your section A lines, so every value you write is already sitting on the line you cite.
 
 ## 3. Receipt fields (section B)
@@ -27,23 +28,28 @@ One row per printed tax line: its label tokens and its amount, each cited. No ta
 
 - One row per purchased item, deposit, fee, coupon or discount, in receipt order.
 - A line that only continues the row above belongs to that row. Example: `R07 PC ORG BNNA` then `R08 1.234 kg @ $1.52/kg 1.88` is one row: As printed `PC ORG BNNA {R07}`, Qty `1.234 kg {R08}`, Unit price `$1.52/kg {R08}`, Amount `1.88 {R08}`.
-- Rows come only from the lines between the store's header and the subtotal. A line there with no amount, that the next line does not continue, is a heading such as `PRODUCE`: not a row, it goes in the ledger.
+- Rows come only from the lines between the store's header (the lines at the top, before the first item or department heading) and the subtotal. A line there with no amount, that the next line does not continue, is a heading such as `PRODUCE`: not a row, it goes in the ledger.
 - A discount or deposit printed under an item is its own row, with its own printed words in As printed.
 - Copy whole tokens only, `$` and all, exactly as printed. For `RED PEPPERS 2 @ 1.99 3.98 G`: As printed `RED PEPPERS`, Qty `2`, Unit price `1.99`, Amount `3.98`, Tax code `G`. If a line prints only a name and an amount, Qty and Unit price are `not in source`. A size in the name (`4L`) stays in As printed. A quantity is never assumed to be 1, and a unit price is never worked out.
 
 ## 6. Look up the codebook
 
-For each row, take its As printed text without the citation and look for exactly that text in the Printed text column of `reference/codebook.md`: same characters, same case. If an entry matches, copy its Tracker name and Category, each cited with the entry id, like `Bananas, organic {C014}`. If none matches exactly, both are `not in codebook`. A close match is no match. Never invent, extend or suggest an entry.
+For each row, take its As printed text without the citation and look for exactly that text in the Printed text column of `reference/codebook.md`: same characters, same case. If an entry matches, copy its Tracker name and Category, each cited with the entry id, like `Bananas, organic {C001}`. If none matches exactly, both are `not in codebook`. A close match is no match. Never invent, extend or suggest an entry.
 
 ## 7. Coverage ledger (section E)
 
-List every source line that no value in B, C or D cites, in order, with `no-field` or, for a line that is mostly `[illegible]` and cannot be placed, `illegible`. If every line is cited, the one row is `none | none`.
+List every source line that no value in B, C or D cites, in order, with `no-field` or, for a line that is mostly `[illegible]` and cannot be placed, `illegible`. Write a run of two or more consecutive uncited lines with the same reason as one range, like `R40-R62 | no-field`. If every line is cited, the one row is `none | none`.
 
-## 8. Check before you send
+## 8. Spreadsheet rows (section F)
 
-- The output starts with `# Receipt translation` and ends with the ledger table. No greeting, note, summary or explanation before or after it, and no progress notes while you work (such as "reading the receipt at higher zoom"): if you zoom in or check glyphs, do it silently. The first characters of your reply are `# Receipt translation`. The output itself is not inside a code block; only the section A lines are, in one ```` ```text ```` block.
+Copy section D again, row for row, as values only: for each row, the receipt's Date and Store name from section B, then the row's As printed, Qty, Unit price, Amount, Tracker name and Category from section D. Remove each `{...}` citation; copy sentinels as they are. Nothing in F is new: every cell is already above.
+
+## 9. Check before you send
+
+- The output starts with `# Receipt translation` and ends with the spreadsheet rows table. No greeting, note, summary or explanation before or after it, and no progress notes while you work (such as "reading the receipt at higher zoom" or "I'll read the spec files first"): if you open the project files, zoom in or check glyphs, do it silently. The first characters of your reply are `# Receipt translation`. The output itself is not inside a code block; only the section A lines are, in one ```` ```text ```` block.
 - Every value is a sentinel, or whole tokens on the one line it cites, or a codebook value whose entry matches its row exactly.
 - Every source line is cited at least once or listed in the ledger, never both.
+- Every row of F repeats its row of D (As printed, Qty, Unit price, Amount, Tracker name, Category) without citations, with the Date and Store name from B.
 - Every heading and column is exactly as in `reference/output-schema.md`.
 
 ## Never add

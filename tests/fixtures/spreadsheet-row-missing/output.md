@@ -45,7 +45,7 @@ R20 THANK YOU FOR SHOPPING
 | GST 5% {R14} | 0.20 {R14} |
 | PST 6% {R15} | 0.24 {R15} |
 
-## D. Line items
+## D. Items
 
 | As printed | Qty | Unit price | Amount | Tax code | Tracker name | Category |
 |---|---|---|---|---|---|---|
@@ -71,5 +71,4 @@ R20 THANK YOU FOR SHOPPING
 | 09/20/26 | PRAIRIE FRSH MKT #0412 | BANANAS | 1.020 kg | not in source | 1.55 | Bananas | Produce |
 | 09/20/26 | PRAIRIE FRSH MKT #0412 | GRN ONIONS | not in source | not in source | 1.29 | not in codebook | not in codebook |
 | 09/20/26 | PRAIRIE FRSH MKT #0412 | SPRKL WTR 1L | 2 | 2.49 | 4.98 | not in codebook | not in codebook |
-| 09/20/26 | PRAIRIE FRSH MKT #0412 | DEPOSIT | not in source | not in source | 0.20 | not in codebook | not in codebook |
 | 09/20/26 | PRAIRIE FRSH MKT #0412 | MULTI-BUY SAVINGS | not in source | not in source | -1.00 | not in codebook | not in codebook |

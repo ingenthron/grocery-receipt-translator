@@ -54,3 +54,24 @@ A fresh Claude agent (Claude Code subagent, Opus) was given only `translator/` (
 - `translator/rules.md`, step 8: forbids progress notes before the title, the one thing run 2 failed on, and says the reply's first characters are `# Receipt translation`.
 - `translator/README.md`: names the tested model (Claude Opus 5.5) and says the folder failed on Claude Haiku (run 1).
 - Made after both heldout-1 runs, so any later run on heldout-1 is labelled "seen". Nothing else in `translator/` changed.
+
+## 2026-09-25 21:45: heldout-1 run 3, FAIL on the bar (fidelity, shape); trace and coverage pass
+
+- Model: Claude Opus 5.5, medium effort, in the Project from runs 1 and 2 (files from commit `69e3654`; the builder did not re-upload `rules.md` after `7a151a3`). New chat, the pseudonymized photo, `Translate this receipt.` Checked with the checker as submitted (`7a151a3`).
+- Output verbatim: `runs/heldout-1/run-3/output.md`. Checker: `runs/heldout-1/run-3/check.txt`.
+- Below its first line, it differs from run 2 in three source lines only: R44 reads `[illegible]ateTime:` (a faint `D` marked illegible instead of guessed, which is correct behaviour), and both asterisk rules have 36 asterisks (the paper has 38; run 2 had 38). Sections B, C and D are identical to run 2 cell for cell.
+- **Trace PASS, coverage PASS.** No value invented.
+- **Fidelity FAIL** on R62 and R67: counting a long run of one symbol is unreliable (38 in run 2, 36 in run 3).
+- **Shape FAIL:** one line before the title, "The project defines the output format, so I'll read its spec files first."
+
+## 2026-09-25, after the 21:59 deadline: changes (the judged version is tag `comp13-submission`, commit `7a151a3`)
+
+- **Section F, Spreadsheet rows:** the D rows again with the Date and Store name from B, values only, pasteable into a spreadsheet. The checker proves every F cell is a copy of its cited source cell, under the trace gate, so F adds no facts.
+- **Ledger ranges:** section E rows may name a range (`R40-R62`) of consecutive uncited lines with one reason. It is the same coverage rule in shorter notation; the checker expands ranges.
+- **Repeated-symbol rule:** a rule of `*` or `-` must have its exact count, or be written `[illegible]` whole. This is the answer to run 3's fidelity failure and uses the existing sentinel; the bar is unchanged.
+- **No preamble, stronger:** the Project instruction line now says to begin with `# Receipt translation` and write nothing before it, not even a note about reading the files; `rules.md` names both preambles seen (runs 2 and 3).
+- **Codebook C005 to C015:** 11 items from heldout-1 that were `not in codebook` in runs 2 and 3, named by Claude Code and pending the builder's approval. Five more (`GG PEACHES N CRM`, `QUPA TC SALTED`, `GRAPE BLUE 2L`, `FS HUMMUS TRDTNL`, `PC ASHWD GRL BRS`) are left unmapped until the builder names them.
+- Any later run on heldout-1 is labelled "seen".
+- Runs 1 to 3 stay judged against the contract, codebook and checker they ran with (commit `7a151a3`); their `check.txt` files are those results. Against the new contract they would fail shape (no section F, `Line` instead of `Lines`), and runs 2 and 3 would also fail trace, because the new codebook entries C005 to C015 now match rows they correctly wrote as `not in codebook`. That is the codebook growing, not a new failure.
+- Checker after these changes: 23 fixtures (5 new: an F cell that differs, a missing F row, an F cell that keeps its citation, a ledger range that swallows a cited line, an `illegible` range with a legible line), all behaving as declared; the 18 old fixtures give the same problems as before.
+- Cold walk 2 (development, not a test): a fresh agent with only the updated folder translated a synthetic pasted receipt; all four gates pass on the new format (`evidence/cold-walk-2/`). Three of the five ambiguities it named were clarified: receipt text is copied as given, rules of symbols included; F repeats six named D columns (not Tax code); "the store's header" is defined.

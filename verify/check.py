@@ -6,14 +6,21 @@ TEST_METHOD.md (fidelity, trace, coverage, shape), with the trace-gate
 correction for codebook citations logged in runs/LOG.md on 2026-09-25.
 
 The contract is read, not copied: section headings, status lines, receipt
-fields and their multi-value flags, table columns, sentinels and reason codes
-come from the markdown tables in translator/reference/output-schema.md, and
-categories and entries come from the codebook's tables. The few names the
-checker has to reason about (the sentinels below, the reason code
-`illegible`, the column `As printed`, the codebook columns `Id` and
-`Printed text`) are named here, and the checker stops with an error if the
+fields and their multi-value flags, table columns, sentinels, reason codes
+and the section F copy map (which cell above each spreadsheet column is
+copied from) come from the markdown tables in
+translator/reference/output-schema.md, and categories and entries come from
+the codebook's tables. The few names the checker has to reason about (the
+sentinels below, the reason code `illegible`, the column `As printed`, the
+codebook columns `Id` and `Printed text`, the copy-map columns `F column` and
+`Copied from`) are named here, and the checker stops with an error if the
 reference files no longer define them. So the checker and the contract
 cannot drift apart silently.
+
+Section F is judged under trace (each cell must be the cell it copies,
+without its citation, and F has one row per D row) and under shape (its
+heading and columns). Ledger rows in E name one line (R07) or a range
+(R40-R62, both ends included); ranges are expanded for coverage.
 
 Standard library only, Python 3.8+, offline, no API key.
 
@@ -47,8 +54,11 @@ ILLEGIBLE_REASON = "illegible"
 AS_PRINTED = "As printed"
 CB_ID = "Id"
 CB_PRINTED = "Printed text"
+COPY_MAP = "Spreadsheet rows (section F)"   # schema heading of the F copy map
+COPY_COL, COPY_FROM = "F column", "Copied from"
+SAME_ROW = "same row"
 # Section roles, by letter. The schema's Sections table must list exactly these.
-SOURCE, FIELDS, TAXES, ITEMS, LEDGER = "A", "B", "C", "D", "E"
+SOURCE, FIELDS, TAXES, ITEMS, LEDGER, SHEET = "A", "B", "C", "D", "E", "F"
 
 FENCE_RE = re.compile(r"^(`{3,}|~{3,})(.*)$")
 SEP_RE = re.compile(r"^\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)*\|?$")
@@ -56,6 +66,7 @@ CITE_RE = re.compile(r"^(?P<text>.*\S) \{(?P<id>[RC]\d+)\}$")
 ANY_CITE_RE = re.compile(r"\{[RC]\d+\}")
 R_CITE_RE = re.compile(r"\{(R\d+)\}")
 SOURCE_LINE_RE = re.compile(r"^(R\d+)(?: (.*))?$")
+LEDGER_CELL_RE = re.compile(r"^(R\d+)(?:-(R\d+))?$")  # R07, or R40-R62 (hyphen-minus)
 MAX_SHOWN = 6  # problems shown per gate before "and N more"
 
 
@@ -175,8 +186,8 @@ class Schema(object):
 
         _, rows = table("Sections", ["Section", "Heading (exact)"])
         self.sections = [(r[0], r[1]) for r in rows]  # [(letter, '## A. Source lines')]
-        if [L for L, _ in self.sections] != [SOURCE, FIELDS, TAXES, ITEMS, LEDGER]:
-            raise ContractError("%s: sections are %s; check.py knows the roles of A to E only"
+        if [L for L, _ in self.sections] != [SOURCE, FIELDS, TAXES, ITEMS, LEDGER, SHEET]:
+            raise ContractError("%s: sections are %s; check.py knows the roles of A to F only"
                                 % (self.path.name, [L for L, _ in self.sections]))
 
         _, rows = table("Status values", ["Status line (exact)"])
@@ -192,11 +203,29 @@ class Schema(object):
 
         _, rows = table("Table columns", ["Section", "Columns (exact, in order)"])
         self.columns = {r[0]: [c.strip() for c in r[1].split(",")] for r in rows}
-        for L in (FIELDS, TAXES, ITEMS, LEDGER):
+        for L in (FIELDS, TAXES, ITEMS, LEDGER, SHEET):
             if L not in self.columns:
                 raise ContractError("%s: no columns listed for section %s" % (self.path.name, L))
         if AS_PRINTED not in self.columns[ITEMS]:
             raise ContractError("%s: section D has no '%s' column" % (self.path.name, AS_PRINTED))
+
+        # Section F copy map: F column -> (B, field) or (D, column) in the same row.
+        _, rows = table(COPY_MAP, [COPY_COL, COPY_FROM])
+        self.copy_from = {}
+        for r in rows:
+            fcol, parts = r[0], [p.strip() for p in r[1].split(",")]
+            if len(parts) == 2 and parts[0] == FIELDS and parts[1] in self.fields:
+                self.copy_from[fcol] = (FIELDS, parts[1])
+            elif (len(parts) == 3 and parts[0] == ITEMS and parts[1] in self.columns[ITEMS]
+                    and parts[2] == SAME_ROW):
+                self.copy_from[fcol] = (ITEMS, parts[1])
+            else:
+                raise ContractError("%s: '%s' copies F column '%s' from '%s'; check.py knows how to copy "
+                                    "from 'B, <field>' or 'D, <column>, %s' only"
+                                    % (self.path.name, COPY_MAP, fcol, r[1], SAME_ROW))
+        if [r[0] for r in rows] != self.columns[SHEET]:
+            raise ContractError("%s: '%s' lists F columns %s, but the Table columns row for F is %s"
+                                % (self.path.name, COPY_MAP, [r[0] for r in rows], self.columns[SHEET]))
 
         _, rows = table("Sentinels", ["Sentinel", "Meaning", "Where"])
         self.sentinels = {r[0]: r[2] for r in rows}
@@ -220,8 +249,8 @@ class Schema(object):
             value_cols.update(self.value_columns(L))
         self.places, self.cited_sentinels = {}, set()
         for name, where in self.sentinels.items():
-            m = re.search(r"[Aa]ny value cell in ([A-E](?:, ?[A-E])*)\b", where)
-            secs_ok = set(re.findall(r"[A-E]", m.group(1))) if m else set()
+            m = re.search(r"[Aa]ny value cell in ([A-F](?:, ?[A-F])*)\b", where)
+            secs_ok = set(re.findall(r"[A-F]", m.group(1))) if m else set()
             cols_ok = set() if m else {c for c in value_cols
                                        if re.search(r"\b%s\b" % re.escape(c), where)}
             self.places[name] = (secs_ok, cols_ok)
@@ -315,7 +344,7 @@ class Output(object):
                 if line in expected:
                     self.body.setdefault(letters[expected.index(line)], b)
         self._parse_source()
-        self.tables = {L: self._table(L) for L in (FIELDS, TAXES, ITEMS, LEDGER)}
+        self.tables = {L: self._table(L) for L in (FIELDS, TAXES, ITEMS, LEDGER, SHEET)}
 
     def _parse_source(self):
         self.a_block = None      # (first, last+1) line indices of the fenced block
@@ -481,7 +510,63 @@ def check_trace(out, schema, cb):
                 if col not in cb_cols:
                     check_cell("%s %s" % (label, col), ITEMS, col, cell, False)
             check_codebook_row(label, cells, ap, cb_cols, src, cb, problems)
+
+    check_sheet(out, schema, problems)
     return problems
+
+
+def uncite(cell, multi=False):
+    """A cell as section F copies it: each value without its citation.
+    Sentinels and anything uncited are copied as they are."""
+    parts = cell.split(" ; ") if multi else [cell]
+    out = []
+    for part in parts:
+        m = CITE_RE.match(part)
+        out.append(m.group("text") if m else part)
+    return " ; ".join(out)
+
+
+def check_sheet(out, schema, problems):
+    """Section F: one row per D row, each cell a copy of its source cell
+    without the citation (the schema's copy map). A missing F section or a
+    wrong F header is shape's to report; values and row count are trace's."""
+    f, d, b = out.tables[SHEET], out.tables[ITEMS], out.tables[FIELDS]
+    if f is None or d is None:
+        return
+    fields = {}
+    if b:
+        for row in b.rows:
+            if len(row) > 1:
+                fields.setdefault(row[0], row[1])
+    same_count = len(f.rows) == len(d.rows)
+    if not same_count:
+        problems.append("F has %d row%s, D has %d; F must have exactly one row per row of D, in the same order"
+                        % (len(f.rows), "" if len(f.rows) == 1 else "s", len(d.rows)))
+    for n, row in enumerate(f.rows, 1):
+        dcells = dict(zip(d.header, d.rows[n - 1])) if n <= len(d.rows) else {}
+        for col, cell in zip(f.header, row):
+            if col not in schema.copy_from:
+                continue
+            where = "F row %d %s" % (n, col)
+            if ANY_CITE_RE.search(cell):
+                problems.append("%s: '%s' carries a citation; section F has none, each cell is a copy "
+                                "without its citation" % (where, cell))
+                continue
+            if not same_count:
+                continue  # rows no longer line up; the row count is the failure
+            letter, name = schema.copy_from[col]
+            if letter == FIELDS:
+                if name not in fields:
+                    continue  # B is missing the field: shape reports it
+                source, desc = fields[name], "B %s" % name
+                want = uncite(source, schema.multi.get(name, False))
+            else:
+                if name not in dcells:
+                    continue  # D is missing the column or the cell: shape reports it
+                source, desc = dcells[name], "D row %d %s" % (n, name)
+                want = uncite(source)
+            if cell != want:
+                problems.append("%s: '%s' is not the %s '%s' without its citation" % (where, cell, desc, want))
 
 
 def check_codebook_row(label, cells, ap, cb_cols, src, cb, problems):
@@ -555,7 +640,8 @@ def check_coverage(out, schema):
                 for cell in (row[1:] if L == FIELDS else row):
                     cited.update(R_CITE_RE.findall(cell))
 
-    ledger = {}
+    ledger = {}  # line id -> the ledger cell that lists it ('R07' or 'R40-R62')
+    order = list(src)
     t = out.tables[LEDGER]
     if t and t.rows:
         if any(NONE in row for row in t.rows):
@@ -563,27 +649,70 @@ def check_coverage(out, schema):
                 problems.append("E: '%s' must be the only row, with '%s' in both cells" % (NONE, NONE))
         else:
             for row in t.rows:
-                lid = row[0]
+                cell = row[0]
                 reason = row[1] if len(row) > 1 else ""
-                if lid not in src:
-                    problems.append("E lists '%s', which is not a line in section A" % lid)
-                elif lid in ledger:
-                    problems.append("E lists %s twice" % lid)
+                lids = ledger_lines(cell, src, order, problems)
+                if lids is None:
+                    if reason not in schema.reasons:
+                        problems.append("E %s: '%s' is not a reason code (%s)"
+                                        % (cell, reason, ", ".join(schema.reasons)))
+                    continue
+                is_range = len(lids) > 1
+                again = [l for l in lids if l in ledger]
+                if again and not is_range and ledger[cell] == cell:
+                    problems.append("E lists %s twice" % cell)
+                elif again:
+                    problems.append("E %s: %s already listed in another ledger row (%s); every line not cited "
+                                    "appears in exactly one row"
+                                    % (cell, ", ".join(again), ", ".join(sorted({ledger[l] for l in again}))))
                 if reason not in schema.reasons:
                     problems.append("E %s: '%s' is not a reason code (%s)"
-                                    % (lid, reason, ", ".join(schema.reasons)))
-                elif reason == ILLEGIBLE_REASON and lid in src and ILLEGIBLE not in src[lid]:
-                    problems.append("E %s: reason '%s' on a line with no %s: '%s'"
-                                    % (lid, reason, ILLEGIBLE, src[lid]))
-                ledger.setdefault(lid, reason)
+                                    % (cell, reason, ", ".join(schema.reasons)))
+                elif reason == ILLEGIBLE_REASON:
+                    plain = [l for l in lids if ILLEGIBLE not in src[l]]
+                    if plain and not is_range:
+                        problems.append("E %s: reason '%s' on a line with no %s: '%s'"
+                                        % (cell, reason, ILLEGIBLE, src[cell]))
+                    elif plain:
+                        problems.append("E %s: reason '%s' needs %s on every line of the range; %s ha%s none "
+                                        "(%s '%s')" % (cell, reason, ILLEGIBLE, ", ".join(plain),
+                                                       "s" if len(plain) == 1 else "ve", plain[0], src[plain[0]]))
+                for l in lids:
+                    ledger.setdefault(l, cell)
 
     for lid, text in src.items():
         c, l = lid in cited, lid in ledger
         if c and l:
-            problems.append("%s is both cited and in the ledger: '%s'" % (lid, text))
+            where = "" if ledger[lid] == lid else " (range %s)" % ledger[lid]
+            problems.append("%s is both cited and in the ledger%s: '%s'" % (lid, where, text))
         elif not c and not l:
             problems.append("%s is neither cited in B, C or D nor listed in E: '%s'" % (lid, text))
     return problems
+
+
+def ledger_lines(cell, src, order, problems):
+    """The line ids one ledger cell names: [R07] for 'R07', every line from
+    R40 to R62 for 'R40-R62'. None (and a problem) if the cell names no lines."""
+    m = LEDGER_CELL_RE.match(cell)
+    if not m:
+        problems.append("E lists '%s', which is not a line id (R07) or a range of lines (R40-R62)" % cell)
+        return None
+    first, last = m.group(1), m.group(2)
+    if last is None:
+        if first not in src:
+            problems.append("E lists '%s', which is not a line in section A" % cell)
+            return None
+        return [first]
+    gone = [l for l in (first, last) if l not in src]
+    if gone:
+        problems.append("E lists the range %s, but %s %s not a line in section A"
+                        % (cell, " and ".join(gone), "is" if len(gone) == 1 else "are"))
+        return None
+    i, j = order.index(first), order.index(last)
+    if i >= j:
+        problems.append("E lists the range %s; a range runs from an earlier line to a later one" % cell)
+        return None
+    return order[i:j + 1]
 
 
 def check_shape(out, schema, cb):

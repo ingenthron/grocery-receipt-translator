@@ -26,7 +26,7 @@ No tax line printed: one row, `not in source` in both cells.
 
 ## D. Items
 
-Rows come only from the item area: the lines after the store's header and before the subtotal line. One row per purchased item, deposit, eco or environmental fee, coupon or discount, in the order the receipt prints them.
+Rows come only from the item area: the lines after the store's header (the lines at the top, before the first item or department heading) and before the subtotal line. One row per purchased item, deposit, eco or environmental fee, coupon or discount, in the order the receipt prints them.
 
 - A line that only continues the row above (a weight, a price per kilogram, a `2 @ 2.49`) belongs to that row, not to a new one.
 - A line in the item area with no amount, that the next line does not continue, is a heading (such as `PRODUCE` or `21-GROCERY`): it is not a row, and it goes in the ledger as `no-field`.
@@ -46,4 +46,8 @@ No item printed: one row, `not in source` in every cell except Tracker name and 
 
 ## E. Coverage ledger
 
-Every source line that no value in B, C or D cites, one row each, in line order: its id (`R12`) and a reason code from `output-schema.md`. Lines the schema has no field for (phone, cashier, payment, card, points, a savings total, item count, department heading, barcode, thank-you) are `no-field`. They are listed, never dropped. A line counts as cited when any value cites it, even if some of its tokens (such as a store number beside the store name) are not used.
+Every source line that no value in B, C or D cites, in line order: its id (`R12`), or a range of consecutive lines with the same reason (`R40-R62`), and a reason code from `output-schema.md`. Lines the schema has no field for (phone, cashier, payment, card, points, a savings total, item count, department heading, barcode, thank-you) are `no-field`. They are listed, never dropped. A line counts as cited when any value cites it, even if some of its tokens (such as a store number beside the store name) are not used.
+
+## F. Spreadsheet rows
+
+The same rows as section D, for pasting into a price-tracking spreadsheet: one row per D row, values only. Date and Store repeat the receipt's Date and Store name from B on every row, so each row stands alone in a price log. Every cell is copied from `output-schema.md`'s mapping, with its citation removed; nothing in F is looked up, reformatted or worked out. To check any F cell, find the same cell in B or D, where its citation is.

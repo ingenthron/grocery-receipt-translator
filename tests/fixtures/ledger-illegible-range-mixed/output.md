@@ -45,7 +45,7 @@ R20 THANK YOU FOR SHOPPING
 | GST 5% {R14} | 0.20 {R14} |
 | PST 6% {R15} | 0.24 {R15} |
 
-## D. Line items
+## D. Items
 
 | As printed | Qty | Unit price | Amount | Tax code | Tracker name | Category |
 |---|---|---|---|---|---|---|
@@ -61,8 +61,7 @@ R20 THANK YOU FOR SHOPPING
 |---|---|
 | R04-R05 | no-field |
 | R17 | no-field |
-| R19 | illegible |
-| R20 | no-field |
+| R19-R20 | illegible |
 
 ## F. Spreadsheet rows
 

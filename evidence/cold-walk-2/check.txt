@@ -1,0 +1,5 @@
+PASS fidelity (18 lines; 0 [illegible] marks on 0 lines)
+PASS trace
+PASS coverage
+PASS shape
+RESULT: PASS (all four gates)
