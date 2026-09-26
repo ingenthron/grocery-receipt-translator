@@ -1,5 +1,5 @@
-SKIP fidelity (no ground truth given)
-PASS trace
-PASS coverage
+FAIL fidelity: section A has 0 lines, the ground truth has 83 (0 lines; 0 [illegible] marks on 0 lines)
+FAIL trace: no section A, B, C, D, E found to check, so nothing in this output can be traced to the receipt
+FAIL coverage: no section A, B, C, D, E found to check, so nothing in this output can be traced to the receipt
 FAIL shape: [1] line 1 must be exactly '# Receipt translation', found 'I can see this is a **Real Canadian Superstore** receipt from September 21, 2026. The receipt is already in English, so here's a clean transcription of the key information:' [2] between the title and the first section there must be exactly one status line (one of: Status: translated; Status: not translated (not-a-receipt); Status: not translated (more-than-one-receipt); Status: not translated (no-input)); found ['---'] [3] section headings must be exactly ['## A. Source lines', '## B. Receipt fields', '## C. Taxes', '## D. Items', '## E. Coverage ledger'] in that order; found ['## **RECEIPT SUMMARY**', '## **ITEMS PURCHASED**', '## **TOTALS**', '## **BONUS**']
-RESULT: FAIL (shape)
+RESULT: FAIL (fidelity, trace, coverage, shape)

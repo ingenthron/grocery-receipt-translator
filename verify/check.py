@@ -381,8 +381,22 @@ def check_fidelity(out, truth_path):
     return problems, note
 
 
+def missing_sections(out, schema):
+    """A translated output with no source lines or no B/C/D/E tables has
+    nothing to trace or cover: that is a failure, never a vacuous pass."""
+    if any(l.strip().startswith("Status: not translated") for l in out.lines):
+        return []
+    missing = [L for L in (FIELDS, TAXES, ITEMS, LEDGER) if not out.tables[L]]
+    if not out.src:
+        missing.insert(0, "A")
+    if missing:
+        return ["no section %s found to check, so nothing in this output can be traced to the receipt"
+                % ", ".join(missing)]
+    return []
+
+
 def check_trace(out, schema, cb):
-    problems = []
+    problems = missing_sections(out, schema)
     src = out.src
     cb_cols = [c for c in schema.columns[ITEMS] if c in cb.header and c not in (CB_ID, CB_PRINTED)]
 
@@ -531,7 +545,7 @@ def check_codebook_row(label, cells, ap, cb_cols, src, cb, problems):
 
 
 def check_coverage(out, schema):
-    problems = []
+    problems = missing_sections(out, schema)
     src = out.src
     cited = set()
     for L in (FIELDS, TAXES, ITEMS):
