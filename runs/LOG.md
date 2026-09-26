@@ -32,3 +32,13 @@ A fresh Claude agent (Claude Code subagent, Opus) was given only `translator/` (
 
 - The builder confirms the run-1 Project had all seven files and the instruction line. Run 1 is therefore a failure of this translator on Claude Haiku, not a setup error.
 - At the builder's request the photo is not published. It was removed from the two unpushed commits that contained it before the first push; nothing else in them changed. `inputs/heldout-1/truth.txt` (the receipt's pseudonymized text) stays, so the receipt can be run as pasted text.
+
+## 2026-09-25 21:22: heldout-1 run 2, FAIL on the bar (fidelity, shape); trace and coverage pass
+
+- Model: Claude Opus 5.5 (extended thinking), same Project and translator commit `69e3654`, new chat, the pseudonymized photo, `Translate this receipt.` The ground truth (draft, not yet proofread) was committed before this run. Not a re-run after a change: nothing in `translator/` changed after the receipt was opened.
+- Output verbatim: `runs/heldout-1/run-2/output.md`. Checker: `runs/heldout-1/run-2/check.txt`.
+- **Trace PASS:** all 66 receipt-cited values are whole tokens on the line they cite. No value is invented. Covered values came back `[illegible]`, never guessed.
+- **Coverage PASS:** all 83 lines are cited or in the ledger.
+- **Fidelity FAIL:** 81 of 83 lines match the ground truth exactly. The two asterisk rules (R62, R67) have 38 asterisks in the output and 37 in the unproofread ground truth. Claude Code's own count, made while drafting, was uncertain between 37 and 38; only the paper settles it, and the builder has been asked to count.
+- **Shape FAIL:** two progress lines, written while the model zoomed into the photo, come before `# Receipt translation`. The rules forbid anything before the title; the model broke that rule. The body alone passes shape (a diagnostic, not the bar).
+- Field placement, by reading: correct throughout. Store name `SUPERSTORE` is taken from R03; the logo lines R01 and R02 are ledgered, never joined. Qty `1` and Unit price `$4.93 ea` come from the printed `1 @ $4.93 ea`; nothing is assumed. The limit lines (`$4.93 lmt 5, $7.19 ea`) are ledgered as no-field.
