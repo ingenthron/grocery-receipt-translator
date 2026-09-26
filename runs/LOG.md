@@ -15,3 +15,15 @@ Append-only, in time order. One entry per event: run, result, failure, change, r
 ## 2026-09-25 17:45: development cold walk (not a test run)
 
 A fresh Claude agent (Claude Code subagent, Opus) was given only `translator/` (no examples yet) and a synthetic pasted receipt, and asked to translate it and list every place the files made it guess. Output and receipt: `evidence/cold-walk-1/`. The output held the shape. It named nine ambiguities: how to tell a department heading from an item name, a savings row from a savings total, a size in a name (`4L`) from a quantity, which tokens form a tax label, whether count tokens belong in As printed, `[redacted]` in pasted text, a store number beside the store name, `coupon` missing from the schema's section D summary, and wrapping the output in a code block. All nine were clarified in `translator/` in the next commit. Not a held-out receipt, not a Claude Project, and not scored against the bar.
+
+## 2026-09-25 18:02: heldout-1 opened, ground truth drafted
+
+`heldout-1` (a real Superstore receipt) was assigned held out before Claude Code opened it, and opened only after translator commit `69e3654`. Claude Code drafted the 83-line ground truth and the pseudonymized photo (`inputs/PROVENANCE.md`). Flagged for the builder's proofread: `lmt` versus `1mt`, the asterisk counts, a trademark mark in the logo, whether four amounts share a line with their `@` text, three item names, the barcode digits.
+
+## 2026-09-25 (before 21:07): heldout-1 run 1, FAIL
+
+- **Slip in the method's order:** the builder ran it before the ground truth was proofread and committed. Its result does not depend on the ground truth: it fails the shape gate outright.
+- Model: Claude Haiku (as reported by the builder; exact version not recorded). Translator commit `69e3654`. Whether the Project had all seven files and the instruction line is being confirmed.
+- Output verbatim: `runs/heldout-1/run-1/output.md`. Checker: `runs/heldout-1/run-1/check.txt` (FAIL shape).
+- The reply opens "The receipt is already in English", so the model read "translate" as changing language and did not follow `identity.md`. Against the receipt, it: invented a total (`$134.08`; the receipt prints `134.88`); invented item names (`Diko Yogurt` for `OIKO YGRT`, `PC Home Gallon Bags` for `PC ASHWD GRL BRS`, `Luma PC Salad` for `QUPA TC SALTED`, `WM` for `NN` throughout); gave wrong prices (`$1.49` for the yogurt's `4.93`, `$4.93` for `4.99`); dropped the eggs line and the GST line; labelled `0.72` (the PST) as GST; added categories and a reformatted date.
+- **Checker defect found by this run:** trace and coverage printed PASS on an output with no sections, because there was nothing to check. They should fail. Fixed in the next commit.

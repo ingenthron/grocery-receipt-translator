@@ -1,0 +1,5 @@
+SKIP fidelity (no ground truth given)
+PASS trace
+PASS coverage
+FAIL shape: [1] line 1 must be exactly '# Receipt translation', found 'I can see this is a **Real Canadian Superstore** receipt from September 21, 2026. The receipt is already in English, so here's a clean transcription of the key information:' [2] between the title and the first section there must be exactly one status line (one of: Status: translated; Status: not translated (not-a-receipt); Status: not translated (more-than-one-receipt); Status: not translated (no-input)); found ['---'] [3] section headings must be exactly ['## A. Source lines', '## B. Receipt fields', '## C. Taxes', '## D. Items', '## E. Coverage ledger'] in that order; found ['## **RECEIPT SUMMARY**', '## **ITEMS PURCHASED**', '## **TOTALS**', '## **BONUS**']
+RESULT: FAIL (shape)
